@@ -43,10 +43,8 @@ jobs:
         # Create the Android SDK directory in the runner's home
         mkdir -p $HOME/Android/Sdk/cmdline-tools
 
-        # Download and install command-line tools
-        wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
-        unzip commandlinetools-linux-7302050_latest.zip -d $HOME/Android/Sdk/cmdline-tools/
-        mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
+        # Install the latest command-line tools
+        sdkmanager "cmdline-tools;latest" --channel=3
 
         # Set environment variables for Android SDK
         echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
