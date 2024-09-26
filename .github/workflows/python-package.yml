@@ -28,11 +28,12 @@ jobs:
         mkdir -p $HOME/Android/Sdk/cmdline-tools
         unzip -q commandlinetools-linux-6609375_latest.zip -d $HOME/Android/Sdk/cmdline-tools
 
-        # Set environment variables
-        echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $GITHUB_ENV
-        echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
-        echo "SDK_VERSION=android-33" >> $GITHUB_ENV
-        echo "PATH=\$PATH:$HOME/Android/Sdk/cmdline-tools/tools/bin" >> $GITHUB_ENV
+        # Set environment variables directly for the current run
+        echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $HOME/.bashrc
+        echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $HOME/.bashrc
+        echo "SDK_VERSION=android-33" >> $HOME/.bashrc
+        echo "PATH=\$PATH:$HOME/Android/Sdk/cmdline-tools/tools/bin" >> $HOME/.bashrc
+        source $HOME/.bashrc
 
         # List available NDK versions
         $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --list
@@ -42,7 +43,7 @@ jobs:
       run: |
         # Install the latest NDK version (you can specify a version here if needed)
         $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "ndk;latest" --channel=3
-        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "platforms;${{ env.SDK_VERSION }}"
+        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "platforms;android-33"
 
         # Verify installations
         java -version
@@ -64,11 +65,13 @@ jobs:
     - name: Build Android Package
       shell: bash
       run: |
+        # Ensure p4a is installed and configured
+        source .venv/bin/activate
         sudo apt-get install -y autoconf automake libtool make
         $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "tools" "platform-tools"
 
         # Run p4a to create the distributive with custom libraries
-        p4a create --requirements firebase-admin,cachecontrol,msgpack,requests,certifi,charset-normalizer,idna,urllib3,google-api-core,google-auth,cachetools,pyasn1-modules,pyasn1,rsa,pyasn1,googleapis-common-protos,protobuf,google-api-python-client,google-auth-httplib2,httplib2,pyparsing,uritemplate,google-cloud-firestore,google-cloud-core,proto-plus,google-cloud-storage,google-resumable-media,google-crc32c --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$(ls $ANDROID_SDK_ROOT/ndk) --dist-name mydist
+        p4a create --requirements firebase-admin,cachecontrol,msgpack,requests,certifi,charset-normalizer,idna,urllib3,google-api-core,google-auth,cachetools,pyasn1-modules,pyasn1,rsa,pyasn1,googleapis-common-protos,protobuf,google-api-python-client,google-auth-httplib2,httplib2,pyparsing,uritemplate,google-cloud-firestore,google-cloud-core,proto-plus,google-cloud-storage,google-resumable-media,google-crc32c --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $HOME/Android/Sdk --ndk-dir $HOME/Android/Sdk/ndk/$(ls $HOME/Android/Sdk/ndk) --dist-name mydist
 
     - name: List APK files
       shell: bash
