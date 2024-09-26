@@ -9,4 +9,3 @@ six
 protobuf
 google-cloud-firestore
 google-cloud-core
-python-for-android
