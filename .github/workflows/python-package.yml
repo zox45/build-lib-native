@@ -1,86 +1,84 @@
-name: Build and Publish Android Package
+name: Android SDK Setup and Python Build
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v1
-      with:
-        java-version: '17'
+      # Install dependencies for Java and Android SDK
+      - name: Install Java and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk wget unzip python3-venv autoconf automake libtool make
 
-    - name: Set up Python 3
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      # Set up environment variables for Java
+      - name: Set Java environment variables
+        run: |
+          echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> $GITHUB_ENV
+          echo "PATH=$PATH:/usr/lib/jvm/java-11-openjdk-amd64/bin" >> $GITHUB_ENV
 
-    - name: Install Python Dependencies
-      run: |
-        pip install --upgrade pip
-        pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
-        pip install --upgrade cython
+      # Install Android SDK command-line tools
+      - name: Install Android SDK
+        run: |
+          mkdir -p $HOME/Android/Sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
+          unzip commandlinetools-linux-7302050_latest.zip -d $HOME/Android/Sdk/cmdline-tools/
+          mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
+          echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
+          echo "SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
+          echo "PATH=$PATH:$HOME/Android/Sdk/cmdline-tools/latest/bin:$HOME/Android/Sdk/platform-tools" >> $GITHUB_ENV
 
-    - name: Upload requirements.txt
-      run: |
-        if [ ! -f requirements.txt ]; then
-          echo "requirements.txt not found!"
-          exit 1
-        fi
-        cat requirements.txt
+      # Install required Android SDK components
+      - name: Install Android SDK components
+        run: |
+          yes | sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
-    - name: Set up Android SDK
-      run: |
-        mkdir -p $HOME/Android/Sdk/cmdline-tools
+      # Install the NDK and other required SDK components
+      - name: Install NDK and SDK components
+        run: |
+          export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+          export NDK_VERSION=25.2.9519653
+          export SDK_VERSION=android-33
+          yes | sdkmanager --install "ndk;$NDK_VERSION" --channel=3
+          yes | sdkmanager --install "platforms;$SDK_VERSION"
 
-        # Download and install the command-line tools
-        wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
+      # Install Temurin8 for JRE 1.8
+      - name: Install Temurin8 for JRE 1.8
+        run: |
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository --yes ppa:linuxuprising/java
+          sudo apt-get update -qq
+          sudo apt-get install -y temurin-8-jdk
 
-        unzip commandlinetools-linux-7302050_latest.zip -d $HOME/Android/Sdk/cmdline-tools/
-        mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
+      # Install Python dependencies
+      - name: Install Python dependencies
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
+          pip install --upgrade cython
 
-        # Set environment variables for Android SDK
-        echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
-        echo "SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
-        echo "PATH=$PATH:$HOME/Android/Sdk/cmdline-tools/latest/bin:$HOME/Android/Sdk/platform-tools" >> $GITHUB_ENV
+      # Build the distributive using p4a (Python-for-Android)
+      - name: Build Android APK with p4a
+        run: |
+          p4a create --requirements firebase-admin,cachecontrol,msgpack,requests,certifi,charset-normalizer,idna,urllib3,google-api-core,google-auth,cachetools,pyasn1-modules,pyasn1,rsa,pyasn1,googleapis-common-protos,protobuf,google-api-python-client, google-auth-httplib2, httplib2, pyparsing, uritemplate, google-cloud-firestore, google-cloud-core, proto-plus, google-cloud-storage, google-resumable-media, google-crc32c --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$NDK_VERSION --dist-name mydist
 
-        # Install required SDK components for API level 33
-        yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.0"
-
-        # Verify the SDK installation
-        $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --list
-
-    - name: Install Android NDK
-      run: |
-        NDK_VERSION="25.2.9519653"
-        yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION"
-
-        # Verify if clang exists
-        if [ ! -f $ANDROID_SDK_ROOT/ndk/$NDK_VERSION/toolchains/llvm/prebuilt/linux-x86_64/bin/clang ]; then
-          echo "Error: clang executable not found!"
-          exit 1
-        fi
-
-    - name: Debug Environment
-      run: |
-        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-        echo "NDK path: $ANDROID_SDK_ROOT/ndk/$NDK_VERSION"
-        ls -la $ANDROID_SDK_ROOT/ndk/$NDK_VERSION/toolchains/llvm/prebuilt/linux-x86_64/bin
-
-    - name: Build Android Package
-      run: |
-        p4a create --requirements=$(paste -s -d, requirements.txt) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 \
-        --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$NDK_VERSION --dist-name mydist
-
-    - name: List APK files
-      run: |
-        ls -la $HOME/Android/Sdk/bin/*.apk
+      # Output environment variables for debugging
+      - name: Debug Environment Variables
+        run: |
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          echo "NDK_VERSION=$NDK_VERSION"
+          echo "SDK_VERSION=$SDK_VERSION"
