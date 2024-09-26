@@ -29,12 +29,13 @@ jobs:
       run: |
         # Ensure you have python-for-android installed
         pip install python-for-android
-        # Build the APK with specified requirements
+        # Build the APK while ignoring setup.py
         p4a apk --private . \
           --package=my_firebase_admin \
           --name="MyFirebaseAdmin" \
           --version=0.1 \
           --bootstrap=python3crystax \
+          --ignore-setup-py \
           --requirements=firebase-admin \
           --requirements=cachecontrol \
           --requirements=msgpack \
