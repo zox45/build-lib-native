@@ -35,13 +35,13 @@ jobs:
         echo "PATH=\$PATH:$HOME/Android/Sdk/cmdline-tools/tools/bin" >> $GITHUB_ENV
 
         # List available NDK versions
-        yes | $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --list
+        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --list
 
     - name: Install Android SDK and NDK
       run: |
         # Install the latest NDK version (you can specify a version here if needed)
-        yes | $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "ndk;latest" --channel=3
-        yes | $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "platforms;${{ env.SDK_VERSION }}"
+        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "ndk;latest" --channel=3
+        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "platforms;${{ env.SDK_VERSION }}"
 
         # Verify installations
         java -version
