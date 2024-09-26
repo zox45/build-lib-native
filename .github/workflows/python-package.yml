@@ -27,16 +27,15 @@ jobs:
         wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
         mkdir -p $HOME/Android/Sdk/cmdline-tools
         unzip -q commandlinetools-linux-6609375_latest.zip -d $HOME/Android/Sdk/cmdline-tools
+        mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/tools  # Correcting the path
 
         # Set environment variables directly for the current run
         echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $HOME/.bashrc
         echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $HOME/.bashrc
         echo "SDK_VERSION=android-33" >> $HOME/.bashrc
         echo "PATH=\$PATH:$HOME/Android/Sdk/cmdline-tools/tools/bin" >> $HOME/.bashrc
+        echo "PATH=\$PATH:$HOME/Android/Sdk/platform-tools" >> $HOME/.bashrc  # Add platform-tools to PATH
         source $HOME/.bashrc
-
-        # List available NDK versions
-        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --list
 
     - name: Install Android SDK and NDK
       shell: bash
