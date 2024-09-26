@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Install dependencies for Java and Android SDK
+      # Install Java and dependencies
       - name: Install Java and dependencies
         run: |
           sudo apt-get update
@@ -74,6 +74,7 @@ jobs:
       # Build the distributive using p4a (Python-for-Android)
       - name: Build Android APK with p4a
         run: |
+          source .venv/bin/activate  # Activate virtual environment
           p4a create --requirements firebase-admin,cachecontrol,msgpack,requests,certifi,charset-normalizer,idna,urllib3,google-api-core,google-auth,cachetools,pyasn1-modules,pyasn1,rsa,pyasn1,googleapis-common-protos,protobuf,google-api-python-client, google-auth-httplib2, httplib2, pyparsing, uritemplate, google-cloud-firestore, google-cloud-core, proto-plus, google-cloud-storage, google-resumable-media, google-crc32c --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$NDK_VERSION --dist-name mydist
 
       # Output environment variables for debugging
