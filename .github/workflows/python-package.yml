@@ -30,6 +30,14 @@ jobs:
         pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
         pip install --upgrade cython
 
+    - name: Upload requirements.txt
+      run: |
+        if [ ! -f requirements.txt ]; then
+          echo "requirements.txt not found!"
+          exit 1
+        fi
+        cat requirements.txt
+
     - name: Set up Android SDK
       run: |
         # Create the Android SDK directory in the runner's home
@@ -45,8 +53,8 @@ jobs:
         echo "SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
         echo "PATH=$PATH:$HOME/Android/Sdk/cmdline-tools/latest/bin:$HOME/Android/Sdk/platform-tools" >> $GITHUB_ENV
 
-        # Install required SDK components
-        yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+        # Install required SDK components for API level 34
+        yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
         # Verify the SDK installation
         $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --list
@@ -56,9 +64,13 @@ jobs:
         NDK_VERSION="25.2.9519653"
         yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION" --channel=3
 
+        # Add NDK toolchains to the PATH
+        echo "PATH=$PATH:$ANDROID_SDK_ROOT/ndk/$NDK_VERSION/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_ENV
+
     - name: Build Android Package
       run: |
-        p4a create --requirements firebase-admin,cachecontrol,msgpack,requests,certifi,charset-normalizer,idna,urllib3,google-api-core,google-auth,cachetools,pyasn1-modules,pyasn1,rsa,pyasn1,googleapis-common-protos,protobuf,google-api-python-client,google-auth-httplib2,httplib2,pyparsing,uritemplate,google-cloud-firestore,google-cloud-core,proto-plus,google-cloud-storage,google-resumable-media,google-crc32c --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$NDK_VERSION --dist-name mydist
+        # Use requirements.txt file for building the Android package
+        p4a create --requirements=$(paste -s -d, requirements.txt) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$NDK_VERSION --dist-name mydist
 
     - name: List APK files
       run: |
