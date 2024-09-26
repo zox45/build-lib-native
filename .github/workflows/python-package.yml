@@ -27,7 +27,7 @@ jobs:
         wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
         mkdir -p $HOME/Android/Sdk/cmdline-tools
         unzip -q commandlinetools-linux-6609375_latest.zip -d $HOME/Android/Sdk/cmdline-tools
-        mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/tools  # Correcting the path
+        #mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/tools  # Correcting the path
 
         # Set environment variables directly for the current run
         echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $HOME/.bashrc
