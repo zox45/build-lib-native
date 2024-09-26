@@ -32,6 +32,7 @@ jobs:
 
     - name: Upload requirements.txt
       run: |
+        # Make sure the requirements.txt is present in the repo
         if [ ! -f requirements.txt ]; then
           echo "requirements.txt not found!"
           exit 1
@@ -43,8 +44,10 @@ jobs:
         # Create the Android SDK directory in the runner's home
         mkdir -p $HOME/Android/Sdk/cmdline-tools
 
-        # Install the latest command-line tools
-        sdkmanager "cmdline-tools;latest" --channel=3
+        # Download and install command-line tools
+        wget https://dl.google.com/android/repository/commandlinetools-linux-*-latest.zip
+        unzip commandlinetools-linux-*-latest.zip -d $HOME/Android/Sdk/cmdline-tools/
+        mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
 
         # Set environment variables for Android SDK
         echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
@@ -61,9 +64,6 @@ jobs:
       run: |
         NDK_VERSION="25.2.9519653"
         yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION" --channel=3
-
-        # Add NDK toolchains to the PATH
-        echo "PATH=$PATH:$ANDROID_SDK_ROOT/ndk/$NDK_VERSION/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_ENV
 
     - name: Build Android Package
       run: |
