@@ -17,8 +17,8 @@ jobs:
     - name: Set up Java and Android SDK
       run: |
         # Install dependencies
-        apt-get update -qq
-        apt-get install -y openjdk-11-jdk wget unzip software-properties-common
+        sudo apt-get update -qq
+        sudo apt-get install -y openjdk-11-jdk wget unzip software-properties-common
 
         # Set environment variables for Java
         echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> $GITHUB_ENV
@@ -46,24 +46,24 @@ jobs:
         # Verify the SDK installation
         $RUNNER_HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --list
 
-    - name: Install Python Dependencies
-      run: |
-        # Install Python and pip
-        apt-get install -y python3-pip
-        pip install --upgrade pip
-        pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
-        pip install --upgrade cython
-
     - name: Install Android NDK
       run: |
         # Set NDK version
         NDK_VERSION="25.2.9519653"
         yes | $RUNNER_HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION" --channel=3
 
+    - name: Install Python Dependencies
+      run: |
+        # Install Python and pip
+        sudo apt-get install -y python3-pip
+        pip install --upgrade pip
+        pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
+        pip install --upgrade cython
+
     - name: Build Android Package
       run: |
-        # Ensure p4a is installed and configured
-        apt-get install -y autoconf automake libtool make
+        # Install required build tools
+        sudo apt-get install -y autoconf automake libtool make
         $RUNNER_HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "tools" "platform-tools"
 
         # Run p4a to create the distributive with custom libraries
