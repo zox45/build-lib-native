@@ -30,12 +30,13 @@ jobs:
       run: |
         # Ensure you have python-for-android installed
         pip install python-for-android
-        # Build the APK specifying the architectures and using default bootstrap
+        # Build the APK specifying the architectures and using setup.py
         p4a apk --private . \
           --package=my_firebase_admin \
           --name="MyFirebaseAdmin" \
           --version=0.1 \
-          --bootstrap=python3 \  # Changed to default bootstrap
+          --bootstrap=python3 \
+          --use-setup-py \  # Use setup.py
           --arch=armeabi-v7a \
           --arch=arm64-v8a \
           --requirements=firebase-admin \
