@@ -17,45 +17,45 @@ jobs:
     - name: Set up Java and Android SDK
       run: |
         # Install dependencies
-        sudo apt-get update -qq
-        sudo apt-get install -y openjdk-11-jdk wget unzip software-properties-common
+        apt-get update -qq
+        apt-get install -y openjdk-11-jdk wget unzip software-properties-common
 
         # Set environment variables for Java
         echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> $GITHUB_ENV
-        echo "PATH=\$PATH:/usr/lib/jvm/java-11-openjdk-amd64/bin" >> $GITHUB_ENV
+        echo "PATH=$PATH:/usr/lib/jvm/java-11-openjdk-amd64/bin" >> $GITHUB_ENV
 
         # Verify Java installation
         java -version
 
         # Create the Android SDK directory in the runner's home
-        mkdir -p $RUNNER_HOME/Android/Sdk/cmdline-tools
+        mkdir -p $HOME/Android/Sdk/cmdline-tools
 
         # Download and install command-line tools
         wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
-        unzip commandlinetools-linux-7302050_latest.zip -d $RUNNER_HOME/Android/Sdk/cmdline-tools/
-        mv $RUNNER_HOME/Android/Sdk/cmdline-tools/cmdline-tools $RUNNER_HOME/Android/Sdk/cmdline-tools/latest
+        unzip commandlinetools-linux-7302050_latest.zip -d $HOME/Android/Sdk/cmdline-tools/
+        mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
 
         # Set environment variables for Android SDK
-        echo "ANDROID_SDK_ROOT=$RUNNER_HOME/Android/Sdk" >> $GITHUB_ENV
-        echo "SDK_ROOT=$RUNNER_HOME/Android/Sdk" >> $GITHUB_ENV
-        echo "PATH=\$PATH:$RUNNER_HOME/Android/Sdk/cmdline-tools/latest/bin:$RUNNER_HOME/Android/Sdk/platform-tools" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
+        echo "SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
+        echo "PATH=$PATH:$HOME/Android/Sdk/cmdline-tools/latest/bin:$HOME/Android/Sdk/platform-tools" >> $GITHUB_ENV
 
         # Install required SDK components
-        yes | $RUNNER_HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+        yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
         # Verify the SDK installation
-        $RUNNER_HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --list
+        $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --list
 
     - name: Install Android NDK
       run: |
         # Set NDK version
         NDK_VERSION="25.2.9519653"
-        yes | $RUNNER_HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION" --channel=3
+        yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION" --channel=3
 
     - name: Install Python Dependencies
       run: |
         # Install Python and pip
-        sudo apt-get install -y python3-pip
+        apt-get install -y python3-pip
         pip install --upgrade pip
         pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
         pip install --upgrade cython
@@ -63,12 +63,12 @@ jobs:
     - name: Build Android Package
       run: |
         # Install required build tools
-        sudo apt-get install -y autoconf automake libtool make
-        $RUNNER_HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "tools" "platform-tools"
+        apt-get install -y autoconf automake libtool make
+        $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "tools" "platform-tools"
 
         # Run p4a to create the distributive with custom libraries
         p4a create --requirements firebase-admin,cachecontrol,msgpack,requests,certifi,charset-normalizer,idna,urllib3,google-api-core,google-auth,cachetools,pyasn1-modules,pyasn1,rsa,pyasn1,googleapis-common-protos,protobuf,google-api-python-client,google-auth-httplib2,httplib2,pyparsing,uritemplate,google-cloud-firestore,google-cloud-core,proto-plus,google-cloud-storage,google-resumable-media,google-crc32c --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$NDK_VERSION --dist-name mydist
 
     - name: List APK files
       run: |
-        ls -la $RUNNER_HOME/Android/Sdk/bin/*.apk
+        ls -la $HOME/Android/Sdk/bin/*.apk
