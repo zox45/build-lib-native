@@ -27,7 +27,7 @@ jobs:
         # Verify Java installation
         java -version
 
-        # Create the Android SDK directory if it doesn't exist
+        # Create the Android SDK directory in the runner's home
         mkdir -p $RUNNER_HOME/Android/Sdk/cmdline-tools
 
         # Download and install command-line tools
@@ -71,4 +71,4 @@ jobs:
 
     - name: List APK files
       run: |
-        ls -la bin/*.apk
+        ls -la $RUNNER_HOME/Android/Sdk/bin/*.apk
