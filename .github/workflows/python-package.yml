@@ -23,38 +23,41 @@ jobs:
         sudo apt-get update -qq
         sudo apt-get install -y temurin-8-jdk
 
+        # Define Android SDK path
+        export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+        
         # Download and set up Android SDK command-line tools
+        mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
         wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
-        mkdir -p $HOME/Android/Sdk/cmdline-tools
-        unzip -q commandlinetools-linux-6609375_latest.zip -d $HOME/Android/Sdk/cmdline-tools
-        #mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/tools  # Correcting the path
+        unzip -q commandlinetools-linux-6609375_latest.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+        mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/tools"  # Correcting the path
 
         # Set environment variables directly for the current run
         echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $HOME/.bashrc
-        echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $HOME/.bashrc
+        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $HOME/.bashrc
         echo "SDK_VERSION=android-33" >> $HOME/.bashrc
         echo "NDK_VERSION=25.2.9519653" >> $HOME/.bashrc  # Add NDK version to .bashrc
-        echo "PATH=\$PATH:$HOME/Android/Sdk/cmdline-tools/tools/bin" >> $HOME/.bashrc
-        echo "PATH=\$PATH:$HOME/Android/Sdk/platform-tools" >> $HOME/.bashrc
-        echo "PATH=\$PATH:$HOME/Android/Sdk/cmdline-tools/tools/bin" >> $GITHUB_ENV  # Set the path for the current step
+        echo "PATH=\$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin" >> $HOME/.bashrc
+        echo "PATH=\$PATH:$ANDROID_SDK_ROOT/platform-tools" >> $HOME/.bashrc
+        echo "PATH=\$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin" >> $GITHUB_ENV  # Set the path for the current step
         source $HOME/.bashrc
 
     - name: Verify Android SDK Path
       run: |
         echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
         echo "PATH: $PATH"  # Print the PATH to verify
-        ls -la $ANDROID_SDK_ROOT/cmdline-tools/tools/bin
-        ls -la $ANDROID_SDK_ROOT/platform-tools
+        ls -la "$ANDROID_SDK_ROOT/cmdline-tools/tools/bin"
+        ls -la "$ANDROID_SDK_ROOT/platform-tools"
 
     - name: Install Android SDK and NDK
       run: |
         # Install a specific version of the NDK
-        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "ndk;${NDK_VERSION}" --channel=3
-        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "platforms;${SDK_VERSION}"
+        "$ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager" --install "ndk;${NDK_VERSION}" --channel=3
+        "$ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager" --install "platforms;${SDK_VERSION}"
 
         # Verify installations
         java -version
-        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --list
+        "$ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager" --list
 
     - name: Install Python Dependencies
       run: |
@@ -68,7 +71,7 @@ jobs:
       run: |
         # Ensure p4a is installed and configured
         sudo apt-get install -y autoconf automake libtool make
-        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "tools" "platform-tools"
+        "$ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager" --install "tools" "platform-tools"
 
         # Run p4a to create the distributive with custom libraries
         p4a create --requirements firebase-admin,cachecontrol,msgpack,requests,certifi,charset-normalizer,idna,urllib3,google-api-core,google-auth,cachetools,pyasn1-modules,pyasn1,rsa,pyasn1,googleapis-common-protos,protobuf,google-api-python-client,google-auth-httplib2,httplib2,pyparsing,uritemplate,google-cloud-firestore,google-cloud-core,proto-plus,google-cloud-storage,google-resumable-media,google-crc32c --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$NDK_VERSION --dist-name mydist
