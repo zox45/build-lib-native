@@ -23,11 +23,16 @@ jobs:
         sudo apt-get update -qq
         sudo apt-get install -y temurin-8-jdk
 
-        # Download and set up Android SDK
+        # Download and set up Android SDK command-line tools
         wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
         mkdir -p $HOME/Android/Sdk/cmdline-tools
         unzip -q commandlinetools-linux-6609375_latest.zip -d $HOME/Android/Sdk/cmdline-tools
-        mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/tools
+        # Check the unzip results to ensure proper directory structure
+        ls -la $HOME/Android/Sdk/cmdline-tools
+
+        # If the cmdline-tools folder structure is incorrect, we can rename it here.
+        # Uncomment the next line if the extracted folder structure needs adjustment.
+        # mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/tools
 
         # Set environment variables
         echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $GITHUB_ENV
