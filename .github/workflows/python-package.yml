@@ -64,8 +64,6 @@ jobs:
     - name: Build Android Package
       shell: bash
       run: |
-        # Ensure p4a is installed and configured
-        source .venv/bin/activate
         sudo apt-get install -y autoconf automake libtool make
         $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "tools" "platform-tools"
 
