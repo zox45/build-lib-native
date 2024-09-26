@@ -41,8 +41,9 @@ jobs:
     - name: Install Android SDK and NDK
       shell: bash
       run: |
-        # Install the latest NDK version (you can specify a version here if needed)
-        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "ndk;latest" --channel=3
+        # Install a specific version of the NDK
+        NDK_VERSION="25.2.9519653"  # Using the specified version
+        $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "ndk;${NDK_VERSION}" --channel=3
         $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "platforms;android-33"
 
         # Verify installations
@@ -52,12 +53,8 @@ jobs:
     - name: Install Python Dependencies
       shell: bash
       run: |
-        # Install virtual environment tools
+        # Upgrade pip and install required packages globally
         sudo apt-get install -y python3-venv
-        # Create a new virtual environment
-        python3 -m venv .venv
-        source .venv/bin/activate
-        # Upgrade pip and install required packages
         pip install --upgrade pip
         pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
         pip install --upgrade cython
@@ -66,12 +63,11 @@ jobs:
       shell: bash
       run: |
         # Ensure p4a is installed and configured
-        source .venv/bin/activate
         sudo apt-get install -y autoconf automake libtool make
         $HOME/Android/Sdk/cmdline-tools/tools/bin/sdkmanager --install "tools" "platform-tools"
 
         # Run p4a to create the distributive with custom libraries
-        p4a create --requirements firebase-admin,cachecontrol,msgpack,requests,certifi,charset-normalizer,idna,urllib3,google-api-core,google-auth,cachetools,pyasn1-modules,pyasn1,rsa,pyasn1,googleapis-common-protos,protobuf,google-api-python-client,google-auth-httplib2,httplib2,pyparsing,uritemplate,google-cloud-firestore,google-cloud-core,proto-plus,google-cloud-storage,google-resumable-media,google-crc32c --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $HOME/Android/Sdk --ndk-dir $HOME/Android/Sdk/ndk/$(ls $HOME/Android/Sdk/ndk) --dist-name mydist
+        p4a create --requirements firebase-admin,cachecontrol,msgpack,requests,certifi,charset-normalizer,idna,urllib3,google-api-core,google-auth,cachetools,pyasn1-modules,pyasn1,rsa,pyasn1,googleapis-common-protos,protobuf,google-api-python-client,google-auth-httplib2,httplib2,pyparsing,uritemplate,google-cloud-firestore,google-cloud-core,proto-plus,google-cloud-storage,google-resumable-media,google-crc32c --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $HOME/Android/Sdk --ndk-dir $HOME/Android/Sdk/ndk/$NDK_VERSION --dist-name mydist
 
     - name: List APK files
       shell: bash
