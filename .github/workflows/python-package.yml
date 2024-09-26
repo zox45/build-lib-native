@@ -56,7 +56,7 @@ jobs:
         echo "PATH=$PATH:$HOME/Android/Sdk/cmdline-tools/latest/bin:$HOME/Android/Sdk/platform-tools" >> $GITHUB_ENV
 
         # Install required SDK components for API level 34
-        yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+        yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
         # Verify the SDK installation
         $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --list
