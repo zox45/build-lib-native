@@ -9,3 +9,4 @@ six
 protobuf
 google-cloud-firestore
 google-cloud-core
+cython
