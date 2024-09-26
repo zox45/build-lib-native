@@ -45,7 +45,8 @@ jobs:
         mkdir -p $HOME/Android/Sdk/cmdline-tools
 
         # Download and install command-line tools
-        wget https://dl.google.com/android/repository/commandlinetools-linux-*-latest.zip
+        wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+
         unzip commandlinetools-linux-*-latest.zip -d $HOME/Android/Sdk/cmdline-tools/
         mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
 
