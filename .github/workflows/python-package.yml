@@ -32,7 +32,6 @@ jobs:
 
     - name: Upload requirements.txt
       run: |
-        # Make sure the requirements.txt is present in the repo
         if [ ! -f requirements.txt ]; then
           echo "requirements.txt not found!"
           exit 1
@@ -41,10 +40,9 @@ jobs:
 
     - name: Set up Android SDK
       run: |
-        # Create the Android SDK directory in the runner's home
         mkdir -p $HOME/Android/Sdk/cmdline-tools
 
-        # Download and install command-line tools
+        # Download and install the command-line tools
         wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
 
         unzip commandlinetools-linux-7302050_latest.zip -d $HOME/Android/Sdk/cmdline-tools/
@@ -55,7 +53,7 @@ jobs:
         echo "SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
         echo "PATH=$PATH:$HOME/Android/Sdk/cmdline-tools/latest/bin:$HOME/Android/Sdk/platform-tools" >> $GITHUB_ENV
 
-        # Install required SDK components for API level 34
+        # Install required SDK components for API level 33
         yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
         # Verify the SDK installation
@@ -66,10 +64,22 @@ jobs:
         NDK_VERSION="25.2.9519653"
         yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION"
 
+        # Verify if clang exists
+        if [ ! -f $ANDROID_SDK_ROOT/ndk/$NDK_VERSION/toolchains/llvm/prebuilt/linux-x86_64/bin/clang ]; then
+          echo "Error: clang executable not found!"
+          exit 1
+        fi
+
+    - name: Debug Environment
+      run: |
+        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+        echo "NDK path: $ANDROID_SDK_ROOT/ndk/$NDK_VERSION"
+        ls -la $ANDROID_SDK_ROOT/ndk/$NDK_VERSION/toolchains/llvm/prebuilt/linux-x86_64/bin
+
     - name: Build Android Package
       run: |
-        # Use requirements.txt file for building the Android package
-        p4a create --requirements=$(paste -s -d, requirements.txt) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$NDK_VERSION --dist-name mydist
+        p4a create --requirements=$(paste -s -d, requirements.txt) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 \
+        --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_SDK_ROOT/ndk/$NDK_VERSION --dist-name mydist
 
     - name: List APK files
       run: |
