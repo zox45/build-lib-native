@@ -74,7 +74,7 @@ jobs:
       
       - name: List zip files
         run: |
-          ls -la /home/runner/.local/share/python-for-android/dists/*.zip
+          ls -la *.zip
       
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v3
