@@ -12,7 +12,7 @@ flet-native is a workflow that allows you to easily build custom native librarie
 - **Intuitive Workflow**: A user-friendly interface for managing the library lifecycle. 🛠️
 
 ## Getting Started
-- "Add all necessary libraries to your requirements.txt and execute workflowX on GitHub."
+- "Add all necessary libraries to your requirements.txt and execute workflow on GitHub."
 ### Prerequisites
 - Ndk 25
 - Sdk 33
