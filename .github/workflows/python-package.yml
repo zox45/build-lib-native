@@ -70,7 +70,7 @@ jobs:
 
       - name: Zip mydist folder
         run: |
-          zip -rj mydist.zip /home/runner/.local/share/python-for-android/dists/mydist
+          zip -r mydist.zip mydist -x '/home/runner/.local/share/python-for-android/dists/*' -C /home/runner/.local/share/python-for-android/dists/
       
       - name: List zip files
         run: |
