@@ -24,6 +24,15 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Upload requirements.txt
+        run: |
+          # Make sure the requirements.txt is present in the repo
+          if [ ! -f requirements.txt ]; then
+            echo "requirements.txt not found!"
+            exit 1
+          fi
+          cat requirements.txt
+
       - name: Install Python Dependencies
         run: |
           python3 -m venv .venv
@@ -56,7 +65,7 @@ jobs:
         id: build_package
         run: |
           source .venv/bin/activate  # Activate virtual environment
-          OUTPUT=$(p4a create --requirements "$(cat requirements.txt)" --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_NDK_HOME --dist-name mydist)
+          OUTPUT=$(p4a create --requirements=$(paste -s -d, requirements.txt) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_NDK_HOME --dist-name mydist)
           echo "output=$OUTPUT" >> $GITHUB_ENV
 
       - name: Zip mydist folder
