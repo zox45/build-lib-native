@@ -70,7 +70,7 @@ jobs:
 
       - name: Zip mydist folder
         run: |
-          zip -r mydist.zip /home/runner/.local/share/python-for-android/dists
+          zip -r mydist.zip /home/runner/.local/share/python-for-android/dists/mydist
       
       - name: List zip files
         run: |
@@ -79,5 +79,5 @@ jobs:
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v3
         with:
-          name: mydist-zip
+          name: mydist
           path: mydist.zip
