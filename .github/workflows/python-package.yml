@@ -74,10 +74,10 @@ jobs:
       
       - name: List zip files
         run: |
-          ls -la *.zip
+          ls -la
       
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v3
         with:
           name: mydist-zip
-          path: /home/runner/.local/share/python-for-android/dists/mydist.zip
+          path: mydist.zip
