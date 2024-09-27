@@ -61,8 +61,7 @@ jobs:
 
       - name: Zip mydist folder
         run: |
-          cd /home/runner/.local/share/python-for-android/dists/
-          zip -r mydist.zip mydist
+          zip -r mydist.zip /home/runner/.local/share/python-for-android/dists
 
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v3
