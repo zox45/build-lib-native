@@ -1,4 +1,4 @@
-# flet-native: Build Your Custom Native Libraries with Python Workflow 🚀
+# flet-native: Build Your Custom Native Flet Libraries with Python Workflow 🚀
 
 ## Overview
 
