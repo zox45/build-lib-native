@@ -1,8 +1,8 @@
-# Flet: Build Your Custom Native Libraries with Python Workflow 🚀
+# flet-native: Build Your Custom Native Libraries with Python Workflow 🚀
 
 ## Overview
 
-Flet is a framework that allows you to easily build custom native libraries using Python. This project provides a streamlined workflow to create, manage, and integrate native libraries into your Python applications. 🐍
+flet-native is a workflow that allows you to easily build custom native libraries using Python. This project provides a streamlined workflow to create, manage, and integrate native libraries into your Python applications. 🐍
 
 ## Features
 
