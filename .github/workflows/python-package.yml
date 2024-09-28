@@ -26,7 +26,6 @@ jobs:
 
       - name: Upload requirements.txt
         run: |
-          # Make sure the requirements.txt is present in the repo
           if [ ! -f requirements.txt ]; then
             echo "requirements.txt not found!"
             exit 1
@@ -39,7 +38,21 @@ jobs:
           source .venv/bin/activate
           pip install --upgrade pip
           pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
-          pip install --upgrade cython
+          pip install --upgrade cython pipgrip
+          
+      - name: Extract Dependencies with pipgrip
+        run: |
+          source .venv/bin/activate
+          pipgrip requirements.txt --strip-extras --output-file=requirements.txt
+
+      - name: Show Updated requirements.txt
+        run: |
+          cat requirements.txt
+
+      - name: Install Dependencies
+        run: |
+          source .venv/bin/activate
+          pip install -r requirements.txt
 
       - name: Set up Android SDK
         run: |
@@ -66,7 +79,6 @@ jobs:
         run: |
           source .venv/bin/activate  # Activate virtual environment
           p4a create --requirements=$(paste -s -d, requirements.txt) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_NDK_HOME --dist-name mydist
-        
 
       - name: Zip mydist folder
         run: |
