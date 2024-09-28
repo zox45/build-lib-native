@@ -33,11 +33,7 @@ jobs:
           fi
           cat requirements.txt
           
-      - name: Extract dependencies with pipgrip
-        run: |
-          source .venv/bin/activate
-          pipgrip $(cat pipgrip.lock) --lock
-
+      
 
       - name: Install Python Dependencies
         run: |
@@ -45,8 +41,13 @@ jobs:
           source .venv/bin/activate
           pip install --upgrade pip
           pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
-          pip install --upgrade cython
-
+          pip install --upgrade cython pipgrip
+          
+      - name: Extract dependencies with pipgrip
+        run: |
+          source .venv/bin/activate
+          pipgrip $(cat pipgrip.lock) --lock
+          
       - name: Set up Android SDK
         run: |
           mkdir -p $HOME/Android/Sdk/cmdline-tools
