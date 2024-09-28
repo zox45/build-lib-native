@@ -1,12 +1,1 @@
 firebase-admin
-cachecontrol
-msgpack
-google-api-core
-google-auth
-pyasn1-modules
-rsa
-six
-protobuf
-google-cloud-firestore
-google-cloud-core
-cython
