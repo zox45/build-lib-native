@@ -20,3 +20,4 @@
 
 ```plaintext
 firebase-admin
+opencv-python
