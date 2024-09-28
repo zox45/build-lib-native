@@ -1,4 +1,4 @@
-name: Build and Publish Android Package
+name: Build Native Libs Android Package
 
 on:
   push:
@@ -43,7 +43,7 @@ jobs:
       - name: Generate pipgrip.lock
         run: |
           source .venv/bin/activate
-          pipgrip $(cat requirements.txt) --lock
+          pipgrip $(cat requirements.txt) --lock --output-file=pipgrip.lock
 
       - name: Show pipgrip.lock
         run: |
@@ -58,31 +58,11 @@ jobs:
           source .venv/bin/activate
           pip install -r pipgrip.lock
 
-      - name: Set up Android SDK
-        run: |
-          mkdir -p $HOME/Android/Sdk/cmdline-tools
-          wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
-          unzip commandlinetools-linux-7302050_latest.zip -d $HOME/Android/Sdk/cmdline-tools/
-          mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
-
-          echo "ANDROID_SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
-          echo "SDK_ROOT=$HOME/Android/Sdk" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=/home/runner/Android/Sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-          echo "PATH=$PATH:$HOME/Android/Sdk/cmdline-tools/latest/bin:$HOME/Android/Sdk/platform-tools:$ANDROID_NDK_HOME" >> $GITHUB_ENV
-
-          yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.0"
-          $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --list
-
-      - name: Install Android NDK
-        run: |
-          NDK_VERSION="25.2.9519653"
-          yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION" --channel=3
-
-      - name: Build Android Package
-        id: build_package
+      - name: Build Lib Native
+        id: build_lib_native
         run: |
           source .venv/bin/activate  # Activate virtual environment
-          p4a create --requirements=$(paste -s -d, pipgrip.lock) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_NDK_HOME --dist-name mydist
+          p4a create --requirements=$(paste -s -d, pipgrip.lock) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --dist-name mydist
 
       - name: Zip mydist folder
         run: |
