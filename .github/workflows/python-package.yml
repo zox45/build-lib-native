@@ -46,7 +46,7 @@ jobs:
       - name: Extract dependencies with pipgrip
         run: |
           source .venv/bin/activate
-          pipgrip $(cat pipgrip.lock) --lock
+          pipgrip $(cat requirements.txt) --lock
           
       - name: Set up Android SDK
         run: |
