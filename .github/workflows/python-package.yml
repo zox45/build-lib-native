@@ -63,7 +63,10 @@ jobs:
 
           yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;33.0.0"
           $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --list
-
+      - name: Remove version
+        run: |
+          sed -i 's/==.*//g' pipgrip.lock
+          
       - name: Install Android NDK
         run: |
           NDK_VERSION="25.2.9519653"
