@@ -43,7 +43,7 @@ jobs:
       - name: Extract Dependencies with pipgrip
         run: |
           source .venv/bin/activate
-          pipgrip requirements.txt --strip-extras --output-file=requirements.txt
+          pipgrip requirements.txt --output-file=requirements.txt
 
       - name: Show Updated requirements.txt
         run: |
