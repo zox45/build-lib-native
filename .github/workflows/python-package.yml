@@ -43,7 +43,7 @@ jobs:
       - name: Generate pipgrip.lock
         run: |
           source .venv/bin/activate
-          pipgrip $(cat requirements.txt) --lock --output-file=pipgrip.lock
+          pipgrip $(cat requirements.txt) --lock
 
       - name: Show pipgrip.lock
         run: |
