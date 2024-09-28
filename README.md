@@ -1,20 +1,20 @@
-# flet-native: Build Your Custom Native Flet Libraries with Python Workflow 🚀
+# Flet-Native 🚀
 
-## Overview
+**Flet-Native** is a cutting-edge tool designed to simplify the compilation of **non-pure Python** packages, which may include components written in languages like C, C++, or Rust. 🛠️
 
-flet-native is a workflow that allows you to easily build custom native libraries using Python. This project provides a streamlined workflow to create, manage, and integrate native libraries into your Python applications. 🐍
+## Key Features 🌟
 
-## Features
+- **Easy Integration**: Compile popular packages like `firebase-admin` for iOS and Android with minimal effort.
+- **Automated Workflow**: Just add your required libraries to the `requirements.txt` file, and Flet-Native handles the rest! 🔄
+- **No Hacks or Patches**: Say goodbye to complex workarounds; our tool streamlines the process for you. 🙌
 
-- **Custom Library Creation**: Quickly build native libraries tailored to your needs. ⚙️
-- **Seamless Integration**: Integrate your libraries into existing Python projects effortlessly. 🔗
-- **Cross-Platform Support**: Develop libraries that work on multiple operating systems. 🌐
-- **Intuitive Workflow**: A user-friendly interface for managing the library lifecycle. 🛠️
+## Usage 📦
 
-## Getting Started
-- "Add all necessary libraries to your requirements.txt and execute workflow on GitHub."
-### Prerequisites
-- Ndk 25
-- Sdk 33
-- Python 3.x 🐍
-- Pip (Python package installer) 📦
+1. Add your non-pure Python package requirements to the `requirements.txt` file.
+2. Run the workflow to automate the compilation process.
+3. Enjoy seamless integration into your mobile apps! 📱
+
+### Example `requirements.txt`:
+
+```plaintext
+firebase-admin
