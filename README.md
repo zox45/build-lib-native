@@ -13,7 +13,7 @@
 ```plaintext
 pipgrip firebase_admin
 ```
-2. Add your non-pure Python package requirements to the `requirements.txt` file and it will be add the dependcy of the lib automatically.
+2. Add your non-pure Python package requirements to the `requirements.txt` file and it will be add the dependency of the lib automatically.
 4. Run the workflow to automate the compilation process.
 5. Download the library as a ZIP file. 📥
 ### Example `requirements.txt`:
