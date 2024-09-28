@@ -40,19 +40,23 @@ jobs:
           pip install git+https://github.com/flet-dev/python-for-android.git@3.11.6
           pip install --upgrade cython pipgrip
           
-      - name: Extract Dependencies with pipgrip
+      - name: Generate pipgrip.lock
         run: |
           source .venv/bin/activate
-          pipgrip requirements.txt --output-file=requirements.txt
+          pipgrip $(cat requirements.txt) --lock --output-file=pipgrip.lock
 
-      - name: Show Updated requirements.txt
+      - name: Show pipgrip.lock
         run: |
-          cat requirements.txt
+          cat pipgrip.lock
+
+      - name: Append requirements.txt to pipgrip.lock
+        run: |
+          cat requirements.txt >> pipgrip.lock
 
       - name: Install Dependencies
         run: |
           source .venv/bin/activate
-          pip install -r requirements.txt
+          pip install -r pipgrip.lock
 
       - name: Set up Android SDK
         run: |
@@ -78,7 +82,7 @@ jobs:
         id: build_package
         run: |
           source .venv/bin/activate  # Activate virtual environment
-          p4a create --requirements=$(paste -s -d, requirements.txt) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_NDK_HOME --dist-name mydist
+          p4a create --requirements=$(paste -s -d, pipgrip.lock) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_NDK_HOME --dist-name mydist
 
       - name: Zip mydist folder
         run: |
