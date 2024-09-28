@@ -13,42 +13,10 @@
 ```plaintext
 pipgrip firebase_admin
 ```
-2. Add your non-pure Python package requirements to the `requirements.txt` file with dependency if exist.
+2. Add your non-pure Python package requirements to the `requirements.txt` file and it will be add the dependcy of the lib automatically.
 4. Run the workflow to automate the compilation process.
 5. Download the library as a ZIP file. 📥
 ### Example `requirements.txt`:
 
 ```plaintext
 firebase-admin
-cachecontrol
-msgpack
-requests
-certifi
-charset-normalizer
-idna
-urllib3
-google-api-core
-google-auth
-cachetools
-pyasn1-modules
-pyasn1
-rsa
-googleapis-common-protos
-protobuf
-grpcio-status
-grpcio
-proto-plus
-google-api-python-client
-google-auth-httplib2
-httplib2
-pyparsing
-uritemplate
-google-cloud-firestore
-google-cloud-core
-google-cloud-storage
-google-crc32c
-google-resumable-media
-pyjwt
-cryptography
-cffi
-pycparser
