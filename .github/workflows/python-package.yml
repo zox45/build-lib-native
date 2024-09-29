@@ -76,7 +76,7 @@ jobs:
         id: build_package
         run: |
           source .venv/bin/activate  # Activate virtual environment
-          p4a create --requirements=$(paste -s -d, pipgrip.lock) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_NDK_HOME --dist-name mydist
+          p4a create --requirements=$(paste -s -d, pipgrip.lock) --arch arm64-v8a --arch armeabi-v7a --arch x86_64 --sdk-dir $ANDROID_SDK_ROOT --ndk-dir $ANDROID_NDK_HOME
         
 
       - name: Zip mydist folder
@@ -87,6 +87,7 @@ jobs:
       - name: List zip files
         run: |
           ls -la
+          $(paste -s -d, pipgrip.lock)
       
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v3
