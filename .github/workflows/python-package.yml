@@ -87,7 +87,7 @@ jobs:
       - name: List zip files
         run: |
           ls -la
-          $(paste -s -d, pipgrip.lock)
+          cat pipgrip.lock
       
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v3
